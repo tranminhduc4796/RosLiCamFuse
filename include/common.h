@@ -19,6 +19,7 @@ void load_img(const std::string &filepath, cv::Mat &img)
     img = cv::imread(filepath, cv::IMREAD_COLOR);
     if (img.empty())
     {
+        std::cerr << "Coulnd't read image file \n";
         throw "Coulnd't read image file \n";
     }
 }

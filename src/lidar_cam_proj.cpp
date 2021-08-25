@@ -1,25 +1,21 @@
 #include "lidar_cam_proj.h"
 #include "common.h"
+#include "pcl/visualization/cloud_viewer.h"
 
-// void load_data_from_bag(const string &bag_path, string &lidar_topic, string &camera_topic)
-// {
-//     ROS_INFO("Start to load the rosbag %s", bag_path.c_str());
-//     rosbag::Bag bag;
-//     try {
-//         bag.open(bag_path, rosbag::bagmode::Read);
-//     } catch (rosbag::BagException e) {
-//         ROS_ERROR_STREAM("LOADING BAG FAILED: " << e.what());
-//         return;
-//     }
+void undistort_img(cv::Mat &img, const cv::Mat &intrinsic_mat, const cv::Mat &distort_coef)
+{
+    cv::Mat view, rview, map1, map2;
+    cv::Size img_size = img.size();
 
-//     std::vector<string> topics ;
-//     topics.push_back(lidar_topic);
-//     topics.push_back(camera_topic);
+    // Refine the camera matrix to keep all the pixels when undistort
+    cv::Mat refined_cam_mat = cv::getOptimalNewCameraMatrix(intrinsic_mat, distort_coef, img_size, 1, img.size(), 0);
+    cv::initUndistortRectifyMap(intrinsic_mat, distort_coef, cv::Mat(), refined_cam_mat, img_size, CV_16SC2, map1, map2);
 
-//     rosbag::View view(bag, rosbag::TopicQuery(topics));
-// }
+    // Undistort image
+    cv::remap(img, img, map1, map2, cv::INTER_LINEAR);
+}
 
-void get_uv(const cv::Mat &intrinsic_mat, const cv::Mat &extrinsic_mat, const pcl::PointXYZRGB &point, float (&uv)[2])
+void get_uv(const cv::Mat &intrinsic_mat, const cv::Mat &extrinsic_mat, const pcl::PointXYZRGB &point, int (&uv)[2])
 {
     // From euclidean to homogeneous coordinate to apply transform
     double matrix3[4][1] = {point.x, point.y, point.z, 1};
@@ -31,16 +27,20 @@ void get_uv(const cv::Mat &intrinsic_mat, const cv::Mat &extrinsic_mat, const pc
     float v = result.at<double>(1, 0);
     float depth = result.at<double>(2, 0);
 
-    uv[0] = u / depth;
-    uv[1] = v / depth;
+    uv[0] = int(u / depth);
+    uv[1] = int(v / depth);
 }
 
-void get_color(const cv::Mat &img, const float *uv, int (&rgb)[3])
+void get_color(const cv::Mat &img, const int (&uv)[2], int (&rgb)[3])
 {
-    // Note: Read image by opencv is in BGR format
-    rgb[0] = img.at<cv::Vec3b>(uv[0], uv[1])[2];
-    rgb[1] = img.at<cv::Vec3b>(uv[0], uv[1])[1];
-    rgb[2] = img.at<cv::Vec3b>(uv[0], uv[1])[0];
+    // Only care valid points
+    if (uv[0] >= 0 && uv[1] >= 0 && uv[0] <= img.size().height && uv[1] <= img.size().width)
+    {
+        // Note: Read image by opencv is in BGR format
+        rgb[0] = img.at<cv::Vec3b>(uv[0], uv[1])[2];
+        rgb[1] = img.at<cv::Vec3b>(uv[0], uv[1])[1];
+        rgb[2] = img.at<cv::Vec3b>(uv[0], uv[1])[0];
+    }
 }
 
 void color_point(pcl::PointXYZRGB &point, const int (&rgb)[3])
@@ -61,7 +61,7 @@ void color_cloud(pcl::PointCloud<pcl::PointXYZRGB> &cloud, const cv::Mat &img, c
             continue;
         }
 
-        float uv[2] = {0, 0};
+        int uv[2] = {0, 0};
         get_uv(intrinsic_mat, extrinsic_mat, point, uv);
 
         int rgb[3] = {0, 0, 0};
@@ -80,25 +80,43 @@ int main()
 {
     // Extrinsic matrix (3, 4)
     double tmp_ex_arr[3][4] =
-        {{7.533745000000e-03, -9.999714000000e-01, -6.166020000000e-04, -4.069766000000e-03},
-         {1.480249000000e-02, 7.280733000000e-04, -9.998902000000e-01, -7.631618000000e-02},
-         {9.998621000000e-01, 7.523790000000e-03, 1.480755000000e-02, -2.717806000000e-01}};
+        {{-0.0090788, 0.0851177, 0.9963295, 0.85383986},
+         {-0.9999462, -0.0057710, -0.0086187, 0.154835},
+         {0.0050163, -0.9963542, 0.0851655, 1.03181427}};
     cv::Mat extrin_mat(3, 4, CV_64F, tmp_ex_arr);
 
     // Intrinsic matrix (3, 3)
     double tmp_in_arr[3][3] =
-        {{1, 0, 0},
-         {0, 1, 0},
-         {0, 0, 1}};
+        {{3974.66, 0, 934.31},
+         {0, 3970.66, 575.35},
+         {0, 0, 1.0}};
     cv::Mat intrin_mat(3, 3, CV_64F, tmp_in_arr);
 
-    // Read .pcd file
-    pcl::PointCloud<pcl::PointXYZRGB> cloud;
-    load_pcd("sample.pcd", cloud);
+    // Distortion coef(5, 1)
+    double tmp_dist_arr[5][1] =
+        {{-0.328462},
+         {0.078086},
+         {-0.004439},
+         {-0.000034},
+         {0.000000}};
+    cv::Mat dist_coef(5, 1, CV_64F, tmp_dist_arr);
 
     // Read image file
     cv::Mat img;
-    load_img("sample.jpg", img);
+    load_img("../img/sample.jpg", img);
 
+    // Read .pcd file
+    pcl::PointCloud<pcl::PointXYZRGB> cloud;
+    load_pcd("../pcd/sample.pcd", cloud);
+
+    undistort_img(img, intrin_mat, dist_coef);
     color_cloud(cloud, img, intrin_mat, extrin_mat);
+
+    // Visualize point cloud
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_ptr(&cloud);
+    pcl::visualization::CloudViewer viewer("RGB Point Cloud Viewer");
+    viewer.showCloud(cloud_ptr);
+    while (!viewer.wasStopped ())
+   {
+   }
 };
