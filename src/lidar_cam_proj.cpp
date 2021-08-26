@@ -29,6 +29,13 @@ void get_uv(const cv::Mat &intrinsic_mat, const cv::Mat &extrinsic_mat, const pc
 
     uv[0] = int(u / depth);
     uv[1] = int(v / depth);
+
+    // Assign -1 to points behind the camera
+    if (depth < 0)
+    {
+        uv[0] = -1;
+        uv[1] = -1;
+    }
 }
 
 void get_color(const cv::Mat &img, const int (&uv)[2], int (&rgb)[3])
@@ -57,20 +64,17 @@ void color_cloud(pcl::PointCloud<pcl::PointXYZRGB> &cloud, const cv::Mat &img, c
     {
         // Ignore invalid point (Just naive implement first)
         if (point.x == 0 && point.y == 0 && point.z == 0)
-        {
             continue;
-        }
 
         int uv[2] = {0, 0};
         get_uv(intrinsic_mat, extrinsic_mat, point, uv);
 
         int rgb[3] = {0, 0, 0};
         get_color(img, uv, rgb);
+
         // Ignore points without color
         if (rgb[0] == 0 && rgb[1] == 0 && rgb[2] == 0)
-        {
             continue;
-        }
 
         color_point(point, rgb);
     }
@@ -104,6 +108,9 @@ int main()
     // Read image file
     cv::Mat img;
     load_img("../img/sample.jpg", img);
+    std::cout << "Image size: ";
+    std::cout << img.size().width << ", ";
+    std::cout << img.size().height << std::endl;
 
     // Read .pcd file
     pcl::PointCloud<pcl::PointXYZRGB> cloud;
@@ -116,7 +123,7 @@ int main()
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_ptr(&cloud);
     pcl::visualization::CloudViewer viewer("RGB Point Cloud Viewer");
     viewer.showCloud(cloud_ptr);
-    while (!viewer.wasStopped ())
-   {
-   }
+    while (!viewer.wasStopped())
+    {
+    }
 };
