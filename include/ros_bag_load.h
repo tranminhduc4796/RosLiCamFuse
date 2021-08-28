@@ -19,7 +19,7 @@
 using namespace std;
 
 // Load, synchronize image and pointcloud, and export data.
-void export_bag(const string &bag_path, const std::vector<std::string> &topics);
+void export_bag(const string &bag_path, const std::vector<std::string> &topics, const std::string &out_dir_path);
 
 /**
  * Inherits from message_filters::SimpleFilter<M>

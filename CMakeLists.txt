@@ -46,4 +46,4 @@ add_executable(fuse
 )
 
 # Link the libraries to the executable
-target_link_libraries(fuse ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${PCL_LIBRARIES})
+target_link_libraries(fuse ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${PCL_LIBRARIES} stdc++fs)
