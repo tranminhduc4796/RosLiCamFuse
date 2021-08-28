@@ -10,7 +10,8 @@
 #include <pcl_conversions/pcl_conversions.h>
 #include <cv_bridge/cv_bridge.h>
 #include <message_filters/subscriber.h>
-#include <message_filters/time_synchronizer.h>
+#include <message_filters/synchronizer.h>
+#include <message_filters/sync_policies/approximate_time.h>
 
 #include <opencv2/opencv.hpp>
 
@@ -33,7 +34,5 @@ public:
     this->signalMessage(msg);
   }
 };
-
-
 
 #endif  // ROS_BAG_LOAD_H

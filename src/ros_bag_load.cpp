@@ -5,7 +5,7 @@
 void process_msgs_cb(const sensor_msgs::CompressedImage::ConstPtr &img_msg, const sensor_msgs::PointCloud2::ConstPtr &cloud_msg)
 {
     // Convert CompressedImage msg to OpenCV matrix
-    // cv::Mat decompressed_img = cv::imdecode(cv::Mat(img_msg->data), cv::IMREAD_COLOR);2
+    // cv::Mat decompressed_img = cv::imdecode(cv::Mat(img_msg->data), cv::IMREAD_COLOR);
     cv_bridge::CvImageConstPtr cv_ptr;
     try
     {
@@ -39,7 +39,8 @@ void export_bag(const string &bag_path, const std::vector<std::string> &topics)
     BagSubscriber<sensor_msgs::CompressedImage> cam_sub;
     BagSubscriber<sensor_msgs::PointCloud2> lidar_sub;
 
-    message_filters::TimeSynchronizer<sensor_msgs::CompressedImage, sensor_msgs::PointCloud2> synchronizer(cam_sub, lidar_sub, 30);
+    typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::CompressedImage, sensor_msgs::PointCloud2> sync_policy;
+    message_filters::Synchronizer<sync_policy> synchronizer(sync_policy(10), cam_sub, lidar_sub);
     synchronizer.registerCallback(boost::bind(&process_msgs_cb, _1, _2));
 
     // Loop through each message in the bag
