@@ -1,6 +1,7 @@
-#include "lidar_cam_proj.h"
+#include "lidar_cam_fuse.h"
 #include "common.h"
 #include "pcl/visualization/cloud_viewer.h"
+
 
 void undistort_img(cv::Mat &img, const cv::Mat &intrinsic_mat, const cv::Mat &distort_coef)
 {
@@ -59,6 +60,9 @@ void color_point(pcl::PointXYZRGB &point, const int (&rgb)[3])
 
 void color_cloud(pcl::PointCloud<pcl::PointXYZRGB> &cloud, const cv::Mat &img, const cv::Mat &intrinsic_mat, const cv::Mat &extrinsic_mat)
 {
+    int uv[2] = {0, 0};
+    int rgb[3] = {0, 0, 0};
+
     // Loop through each point in point cloud
     for (pcl::PointXYZRGB &point : cloud)
     {
@@ -66,10 +70,13 @@ void color_cloud(pcl::PointCloud<pcl::PointXYZRGB> &cloud, const cv::Mat &img, c
         if (point.x == 0 && point.y == 0 && point.z == 0)
             continue;
 
-        int uv[2] = {0, 0};
+        uv[0] = 0;
+        uv[1] = 0;
         get_uv(intrinsic_mat, extrinsic_mat, point, uv);
 
-        int rgb[3] = {0, 0, 0};
+        rgb[0] = 0;
+        rgb[1] = 0;
+        rgb[2] = 0;
         get_color(img, uv, rgb);
 
         // Ignore points without color
@@ -107,14 +114,14 @@ int main()
 
     // Read image file
     cv::Mat img;
-    load_img("../img/sample.jpg", img);
+    load_img("/home/ductm/catkin_ws/src/lidar_cam_proj/img/sample.jpg", img);
     std::cout << "Image size: ";
     std::cout << img.size().width << ", ";
     std::cout << img.size().height << std::endl;
 
     // Read .pcd file
     pcl::PointCloud<pcl::PointXYZRGB> cloud;
-    load_pcd("../pcd/sample.pcd", cloud);
+    load_pcd("/home/ductm/catkin_ws/src/lidar_cam_proj/pcd/sample.pcd", cloud);
 
     undistort_img(img, intrin_mat, dist_coef);
     color_cloud(cloud, img, intrin_mat, extrin_mat);
@@ -126,4 +133,4 @@ int main()
     while (!viewer.wasStopped())
     {
     }
-};
+}

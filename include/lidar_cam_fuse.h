@@ -1,3 +1,6 @@
+#ifndef LIDAR_FUSE_H
+#define LIDAR_FUSE_H
+
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
 #include <pcl/common/transforms.h>
@@ -16,3 +19,5 @@ void get_color(const cv::Mat &img, const int (&uv)[2], int (&rgb)[3]);
 void color_point(pcl::PointXYZRGB &point, const int (&rgb)[3]);
 // Color the point cloud
 void color_cloud(pcl::PointCloud<pcl::PointXYZRGB> &cloud, const cv::Mat &img, const cv::Mat &intrinsic_mat, const cv::Mat &extrinsic_mat);
+
+#endif
