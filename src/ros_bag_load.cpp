@@ -54,6 +54,7 @@ void export_bag(const string &bag_path, const std::vector<std::string> &topics, 
     BagSubscriber<CompressedImage> cam_sub;
     BagSubscriber<PointCloud2> lidar_sub;
 
+    // Use time approximate synchronizer
     typedef message_filters::sync_policies::ApproximateTime<CompressedImage, PointCloud2> sync_policy;
     message_filters::Synchronizer<sync_policy> synchronizer(sync_policy(10), cam_sub, lidar_sub);
     synchronizer.registerCallback(boost::bind(&process_msgs_cb, _1, _2, out_dir_path));
