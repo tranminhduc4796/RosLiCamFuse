@@ -41,9 +41,14 @@ include_directories(
 add_executable(fuse
   src/main.cpp
   src/ros_bag_load.cpp
-  # src/lidar_cam_fuse.cpp
-  # src/common.cpp
+  src/lidar_cam_fuse.cpp
+  src/common.cpp
 )
 
 # Link the libraries to the executable
 target_link_libraries(fuse ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${PCL_LIBRARIES} stdc++fs)
+
+# Install the launch directory
+install(DIRECTORY launch/
+    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
+)

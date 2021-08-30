@@ -87,50 +87,50 @@ void color_cloud(pcl::PointCloud<pcl::PointXYZRGB> &cloud, const cv::Mat &img, c
     }
 }
 
-int main()
-{
-    // Extrinsic matrix (3, 4)
-    double tmp_ex_arr[3][4] =
-        {{-0.0090788, 0.0851177, 0.9963295, 0.85383986},
-         {-0.9999462, -0.0057710, -0.0086187, 0.154835},
-         {0.0050163, -0.9963542, 0.0851655, 1.03181427}};
-    cv::Mat extrin_mat(3, 4, CV_64F, tmp_ex_arr);
+// int main()
+// {
+//     // Extrinsic matrix (3, 4)
+//     double tmp_ex_arr[3][4] =
+//         {{-0.0090788, 0.0851177, 0.9963295, 0.85383986},
+//          {-0.9999462, -0.0057710, -0.0086187, 0.154835},
+//          {0.0050163, -0.9963542, 0.0851655, 1.03181427}};
+//     cv::Mat extrin_mat(3, 4, CV_64F, tmp_ex_arr);
 
-    // Intrinsic matrix (3, 3)
-    double tmp_in_arr[3][3] =
-        {{3974.66, 0, 934.31},
-         {0, 3970.66, 575.35},
-         {0, 0, 1.0}};
-    cv::Mat intrin_mat(3, 3, CV_64F, tmp_in_arr);
+//     // Intrinsic matrix (3, 3)
+//     double tmp_in_arr[3][3] =
+//         {{3974.66, 0, 934.31},
+//          {0, 3970.66, 575.35},
+//          {0, 0, 1.0}};
+//     cv::Mat intrin_mat(3, 3, CV_64F, tmp_in_arr);
 
-    // Distortion coef(5, 1)
-    double tmp_dist_arr[5][1] =
-        {{-0.328462},
-         {0.078086},
-         {-0.004439},
-         {-0.000034},
-         {0.000000}};
-    cv::Mat dist_coef(5, 1, CV_64F, tmp_dist_arr);
+//     // Distortion coef(5, 1)
+//     double tmp_dist_arr[5][1] =
+//         {{-0.328462},
+//          {0.078086},
+//          {-0.004439},
+//          {-0.000034},
+//          {0.000000}};
+//     cv::Mat dist_coef(5, 1, CV_64F, tmp_dist_arr);
 
-    // Read image file
-    cv::Mat img;
-    load_img("/home/ductm/catkin_ws/src/lidar_cam_proj/img/sample.jpg", img);
-    std::cout << "Image size: ";
-    std::cout << img.size().width << ", ";
-    std::cout << img.size().height << std::endl;
+//     // Read image file
+//     cv::Mat img;
+//     load_img("/home/ductm/catkin_ws/src/lidar_cam_proj/img/sample.jpg", img);
+//     std::cout << "Image size: ";
+//     std::cout << img.size().width << ", ";
+//     std::cout << img.size().height << std::endl;
 
-    // Read .pcd file
-    pcl::PointCloud<pcl::PointXYZRGB> cloud;
-    load_pcd("/home/ductm/catkin_ws/src/lidar_cam_proj/pcd/sample.pcd", cloud);
+//     // Read .pcd file
+//     pcl::PointCloud<pcl::PointXYZRGB> cloud;
+//     load_pcd("/home/ductm/catkin_ws/src/lidar_cam_proj/pcd/sample.pcd", cloud);
 
-    undistort_img(img, intrin_mat, dist_coef);
-    color_cloud(cloud, img, intrin_mat, extrin_mat);
+//     undistort_img(img, intrin_mat, dist_coef);
+//     color_cloud(cloud, img, intrin_mat, extrin_mat);
 
-    // Visualize point cloud
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_ptr(&cloud);
-    pcl::visualization::CloudViewer viewer("RGB Point Cloud Viewer");
-    viewer.showCloud(cloud_ptr);
-    while (!viewer.wasStopped())
-    {
-    }
-}
+//     // Visualize point cloud
+//     pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_ptr(&cloud);
+//     pcl::visualization::CloudViewer viewer("RGB Point Cloud Viewer");
+//     viewer.showCloud(cloud_ptr);
+//     while (!viewer.wasStopped())
+//     {
+//     }
+// }
