@@ -23,8 +23,20 @@ int main(int argc, char **argv)
     nh.getParam("cam_topic", cam_topic);
     nh.getParam("out_dir", out_dir_path);
 
-    std::vector<std::string> topics = {cam_topic, lidar_topic};
-    export_bag(bag_path, topics, out_dir_path);
+    int f_count;
+    fs::path dir(out_dir_path);
+
+    f_count = count_file(out_dir_path) / 2;
+
+    // Put your data into out_dir if data is not read from ros bag
+    if (f_count <= 0)
+    {
+        std::vector<std::string> topics = {cam_topic, lidar_topic};
+        export_bag(bag_path, topics, out_dir_path);
+
+        // Update count after export files to loop through exported files in next process
+        f_count = count_file(out_dir_path) / 2;
+    }
 
     // Load calibration params
     double tmp_ex_arr[3][4];
@@ -47,14 +59,15 @@ int main(int argc, char **argv)
     cv::Mat intrin_mat(3, 3, CV_64F, tmp_in_arr);
     cv::Mat dist_coef(5, 1, CV_64F, tmp_dist_arr);
 
-    std::cout << "Extrinsic:\n" << cv::format(extrin_mat, cv::Formatter::FMT_NUMPY) << std::endl << std::endl;
-    std::cout << "Intrinsic:\n" << cv::format(intrin_mat, cv::Formatter::FMT_NUMPY) << std::endl << std::endl;
-    std::cout << "Distortion:\n" << cv::format(dist_coef, cv::Formatter::FMT_NUMPY) << std::endl << std::endl;
-
-    int f_count;
-    fs::path dir(out_dir_path);
-
-    f_count = count_file(out_dir_path) / 2;
+    std::cout << "Extrinsic:\n"
+              << cv::format(extrin_mat, cv::Formatter::FMT_NUMPY) << std::endl
+              << std::endl;
+    std::cout << "Intrinsic:\n"
+              << cv::format(intrin_mat, cv::Formatter::FMT_NUMPY) << std::endl
+              << std::endl;
+    std::cout << "Distortion:\n"
+              << cv::format(dist_coef, cv::Formatter::FMT_NUMPY) << std::endl
+              << std::endl;
 
     for (int i = 0; i < f_count; i++)
     {
@@ -64,6 +77,10 @@ int main(int argc, char **argv)
 
         cv::Mat img;
         load_img(cam_filepath.string(), img);
+
+        std::cout << "Loaded image with rows x column: "
+            << img.rows << " x " << img.cols 
+            << std::endl;
 
         // Read.pcd
         fs::path lidar_filename("lidar_" + std::to_string(i) + ".pcd");

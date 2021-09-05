@@ -3,7 +3,7 @@
   <node pkg="lidar_cam_fuse" name="fuse" type="fuse" output="screen">
     <param name="out_dir" value="/home/ductm/catkin_ws/src/lidar_cam_proj/data/" />
     <param name="bag" value="/home/ductm/ros1_bags/sample.bag" />   
-    <param name="cam_topic" value="/camera/tricam/short/image_raw/compressed" />
+    <param name="cam_topic" value="/camera/tricam/mid/image_raw/compressed" />
     <param name="lidar_topic" value="/lidar/points_raw" />
     <param name="intrinsic" value="/home/ductm/catkin_ws/src/lidar_cam_proj/calib/intrinsic.txt" />    
     <param name="extrinsic" value="/home/ductm/catkin_ws/src/lidar_cam_proj/calib/extrinsic.txt" />    

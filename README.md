@@ -26,7 +26,7 @@ catkin_make
 ## Quickrun Examples
 
 ```bash
-rosrun lidar_cam_fuse fuse _out_dir:="/home/ductm/catkin_ws/src/lidar_cam_proj/data/" _bag:="/home/ductm/ros1_bags/sample.bag" _cam_topic:="/camera/tricam/short/image_raw/compressed" _lidar_topic:="/lidar/points_raw" _extrinsic:="/home/ductm/catkin_ws/src/lidar_cam_proj/calib/extrinsic.txt" _intrinsic:="/home/ductm/catkin_ws/src/lidar_cam_proj/calib/intrinsic.txt" _distortion:="/home/ductm/catkin_ws/src/lidar_cam_proj/calib/distortion.txt"
+rosrun lidar_cam_fuse fuse _out_dir:="/home/ductm/catkin_ws/src/lidar_cam_proj/data/" _bag:="/home/ductm/ros1_bags/sample.bag" _cam_topic:="/camera/tricam/mid/image_raw/compressed" _lidar_topic:="/lidar/points_raw" _extrinsic:="/home/ductm/catkin_ws/src/lidar_cam_proj/calib/extrinsic.txt" _intrinsic:="/home/ductm/catkin_ws/src/lidar_cam_proj/calib/intrinsic.txt" _distortion:="/home/ductm/catkin_ws/src/lidar_cam_proj/calib/distortion.txt"
 ```
 
 or
@@ -58,6 +58,10 @@ Write your extrinsic, intrinsic & distortion parameters in .txt by following the
 #### Distortion
 ```
 -0.328462 0.078086 -0.004439 -0.000034 0.000000
+```
+`Note`: If the image is undistorted (exp: images in KITTI), set all coefficients to 0:
+```
+0 0 0 0 0
 ```
 
 ### Launch
