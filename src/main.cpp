@@ -60,13 +60,16 @@ int main(int argc, char **argv)
     cv::Mat dist_coef(5, 1, CV_64F, tmp_dist_arr);
 
     std::cout << "Extrinsic:\n"
-              << cv::format(extrin_mat, cv::Formatter::FMT_NUMPY) << std::endl
+              << cv::format(extrin_mat, cv::Formatter::FMT_NUMPY) 
+              << std::endl
               << std::endl;
     std::cout << "Intrinsic:\n"
-              << cv::format(intrin_mat, cv::Formatter::FMT_NUMPY) << std::endl
+              << cv::format(intrin_mat, cv::Formatter::FMT_NUMPY) 
+              << std::endl
               << std::endl;
     std::cout << "Distortion:\n"
-              << cv::format(dist_coef, cv::Formatter::FMT_NUMPY) << std::endl
+              << cv::format(dist_coef, cv::Formatter::FMT_NUMPY) 
+              << std::endl
               << std::endl;
 
     for (int i = 0; i < f_count; i++)

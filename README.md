@@ -59,7 +59,7 @@ Write your extrinsic, intrinsic & distortion parameters in .txt by following the
 ```
 -0.328462 0.078086 -0.004439 -0.000034 0.000000
 ```
-`Note`: If the image is undistorted (exp: images in KITTI), set all coefficients to 0:
+`Note`: If the image is already undistorted (exp: images in KITTI), set all coefficients to 0:
 ```
 0 0 0 0 0
 ```
@@ -71,3 +71,8 @@ To define the paths to required files, you edit `launch/lidar_cam_fuse.launch`
 * cam_topic: Topic to read messages from camera. (Currently, only support CompressedImage. You can change CompressedImage into Image to run with Image messages)
 * lidar_topic: Topic to read messages from lidar.
 * extrinsic/intrinsic/distortion: Paths to caliration files.
+
+### Debug
+* `Failed to find match for field 'rgb'.` appears when we read a point cloud without rgb color. We dont need to worry about it.
+* If the projection is completely wrong, it's likely due to the extrinsic params, the distortion and intrinsic params does not affect much the result.
+* I strongly recommend using images with vertical, horizontal colored or a segmented ones to verify the accuracy of your projection.

@@ -2,7 +2,6 @@
 #include "common.h"
 #include "pcl/visualization/cloud_viewer.h"
 
-
 void undistort_img(cv::Mat &img, const cv::Mat &intrinsic_mat, const cv::Mat &distort_coef)
 {
     cv::Mat view, rview, map1, map2;
@@ -42,12 +41,19 @@ void get_uv(const cv::Mat &intrinsic_mat, const cv::Mat &extrinsic_mat, const pc
 void get_color(const cv::Mat &img, const int (&uv)[2], int (&rgb)[3])
 {
     // Points ouside camera's FOV should be ignored
-    if (uv[0] >= 0 && uv[1] >= 0 && uv[0] < img.size().height && uv[1] < img.size().width)
+    if (uv[0] >= 0 && uv[1] >= 0 && uv[0] < img.size().width && uv[1] < img.size().height)
     {
-        // Image read by opencv is in BGR format
-        rgb[0] = img.at<cv::Vec3b>(uv[0], uv[1])[2];
-        rgb[1] = img.at<cv::Vec3b>(uv[0], uv[1])[1];
-        rgb[2] = img.at<cv::Vec3b>(uv[0], uv[1])[0];
+        /*
+        Note: 
+        Tt's quite confused, uv is not [row, column], but follows this coordinate
+        O--> U
+        |
+        v
+        V
+        */
+        rgb[0] = img.at<cv::Vec3b>(uv[1], uv[0])[2];
+        rgb[1] = img.at<cv::Vec3b>(uv[1], uv[0])[1];
+        rgb[2] = img.at<cv::Vec3b>(uv[1], uv[0])[0];
     }
 }
 
@@ -68,7 +74,6 @@ void color_cloud(pcl::PointCloud<pcl::PointXYZRGB> &cloud, const cv::Mat &img, c
         // Ignore points at the position of Lidar which are unreasonable
         if (point.x == 0 && point.y == 0 && point.z == 0)
             continue;
-
         uv[0] = 0;
         uv[1] = 0;
         get_uv(intrinsic_mat, extrinsic_mat, point, uv);
