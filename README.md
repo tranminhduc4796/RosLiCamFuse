@@ -1,4 +1,4 @@
-# ROS Bag Lidar Camera Color
+# RosLiCamFuse (ROS Lidar Camera Fuse)
 
 This tool read the images and point clouds from a rosbag, synchronize the message, and apply the calibration parameter to color the point clouds base on images.
 
