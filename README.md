@@ -66,7 +66,7 @@ Write your extrinsic, intrinsic & distortion parameters in .txt by following the
 0 0 0 0 0
 ```
 
-### Launch
+## Launch
 To define the paths to required files, you edit `launch/lidar_cam_fuse.launch`
 * out_dir: Directory where synchronized image, pointcloud & colored point cloud saved.
 * bag: Path to the bag file.
