@@ -74,7 +74,7 @@ To define the paths to required files, you edit `launch/lidar_cam_fuse.launch`
 * lidar_topic: Topic to read messages from lidar.
 * extrinsic/intrinsic/distortion: Paths to caliration files.
 
-### Debug
+## Debug
 * `Failed to find match for field 'rgb'.` appears when we read a point cloud without rgb color. We dont need to worry about it.
 * If the projection is completely wrong, it's likely due to the extrinsic params, the distortion and intrinsic params does not affect much the result.
 * I strongly recommend using images with vertical, horizontal colored or a segmented ones to verify the accuracy of your projection.
