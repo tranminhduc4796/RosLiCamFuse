@@ -8,7 +8,6 @@ This tool reads the images and point clouds' messages from a rosbag, synchronize
 Make sure you installed:
 ```
 sudo apt install libpcl-dev
-
 ```
 and
 

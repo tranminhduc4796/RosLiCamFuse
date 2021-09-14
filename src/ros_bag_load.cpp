@@ -9,7 +9,7 @@ namespace fs =  std::experimental::filesystem;
 int PAIR_COUNT = 0;
 
 // Callback to process synchornized messages
-void process_msgs_cb(const CompressedImage::ConstPtr &img_msg, const PointCloud2::ConstPtr &cloud_msg, const std::string &out_dir_path)
+void synced_msgs_export(const CompressedImage::ConstPtr &img_msg, const PointCloud2::ConstPtr &cloud_msg, const std::string &out_dir_path)
 {
     // Convert CompressedImage msg to OpenCV matrix
     cv_bridge::CvImageConstPtr cv_ptr;
@@ -57,7 +57,7 @@ void export_bag(const string &bag_path, const std::vector<std::string> &topics, 
     // Use time approximate synchronizer
     typedef message_filters::sync_policies::ApproximateTime<CompressedImage, PointCloud2> sync_policy;
     message_filters::Synchronizer<sync_policy> synchronizer(sync_policy(10), cam_sub, lidar_sub);
-    synchronizer.registerCallback(boost::bind(&process_msgs_cb, _1, _2, out_dir_path));
+    synchronizer.registerCallback(boost::bind(&synced_msgs_export, _1, _2, out_dir_path));
 
     // Loop through each message in the bag
     for (rosbag::MessageInstance m : view)

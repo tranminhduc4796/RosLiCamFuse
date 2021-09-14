@@ -28,9 +28,10 @@ int main(int argc, char **argv)
 
     f_count = count_file(out_dir_path) / 2;
 
-    // Put your data into out_dir if data is not read from ros bag
+    // Put your data into <out_dir> if data is not read from ros bag
     if (f_count <= 0)
     {
+        std::cout << "Exporting rosbag..." << std::endl;
         std::vector<std::string> topics = {cam_topic, lidar_topic};
         export_bag(bag_path, topics, out_dir_path);
 

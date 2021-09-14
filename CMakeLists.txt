@@ -25,7 +25,6 @@ find_package(catkin REQUIRED COMPONENTS
   message_filters
 )
 
-# 
 catkin_package(
  CATKIN_DEPENDS message_runtime roscpp sensor_msgs pcl_conversions cv_bridge pcl_ros
 )
