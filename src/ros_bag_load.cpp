@@ -26,7 +26,7 @@ void synced_msgs_export(const CompressedImage::ConstPtr &img_msg, const PointClo
     // Convert PointCloud2 msg to PCL Point Cloud
     pcl::PCLPointCloud2 pc2_cloud;
     pcl_conversions::toPCL(*cloud_msg, pc2_cloud);
-    pcl::PointCloud<pcl::PointXYZ> cloud;
+    pcl::PointCloud<pcl::PointXYZI> cloud;
     pcl::fromPCLPointCloud2(pc2_cloud, cloud);
 
     fs::path dir(out_dir_path);
